@@ -41,23 +41,30 @@ int main(int argc, char **argv)
 
 	// Receive data from server
 	// Note that server is programmed to send hello message.
-	char message_buffer[1024];
-	int strLen = recv(h_socket, message_buffer, sizeof(message_buffer) - 1, 0);
+	char message_server[1024];
+	char message_client[1024];
+	while (1){
+	int strLen = recv(h_socket, message_server, sizeof(message_server)-1, 0);
 	if (strLen == -1)
 	{
 		printf("read() error\n");
 	}
 
 	// Print the message received from the server
-	message_buffer[strLen] = '\0';
-	printf("Message from server : %s \n", message_buffer);
+		message_server[strLen] = 0;
+		printf("Message from server : %s", message_server);
 
-	fgets(message_buffer,sizeof(message_buffer) ,stdin);
-	message_buffer[strlen(message_buffer) - 1] = 0;
+		if (strcmp(message_server, "end\n") == 0)
+			break;
 
-	// Send message to server
-	//strcpy(message_buffer, "Hello from client");
-	send(h_socket, message_buffer, sizeof(message_buffer) -1, 0);
+		// Send message to server
+		//strcpy(message_buffer, "Hello from client");
+		printf("your message to server:");
+		fgets(message_client, sizeof(message_client), stdin);
+		message_client[strlen(message_client) - 1] = 0;
+		send(h_socket, message_client, sizeof(message_client)-1, 0);
+	}
+	printf("*****end*********\n");
 
 	// Close connection
 	closesocket(h_socket);
